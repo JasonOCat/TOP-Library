@@ -23,44 +23,32 @@ function addBookToLibrary(e) {
     let title = document.getElementById('title').value;
     let author = document.getElementById('author').value;
     let pages = document.getElementById('pages').value;
-    let read = document.getElementById('read').value;
+    let read = document.getElementById('read').checked;
+    console.log(read);
     let book = new Book(title, author, pages, read);
     myLibrary.push(book);
+    alert(`"${title}" added`);
+    bookForm.reset();
     displayBooks();
 }
-
-function displayAddBookForm() {
-    bookForm.hidden = false;
-}
-
-
-
-
-let book = new Book("tom tom et nana", "Herge", 300, true);
-let book2 = new Book("Le seigneur des anneaux", "Tolkien", 600, false);
-let book3 = new Book("Naruto", "Kishimoto", 150, true);
-let book4 = new Book("Naruto", "Kishimoto", 150, true);
-let book5 = new Book("Naruto", "Kishimoto", 150, true);
-let book6 = new Book("Naruto", "Kishimoto", 150, true);
-
-myLibrary.push(book, book2, book3, book4, book5, book6);
 
 
 function displayBooks() {
     const bookTable = document.createElement('div');
     mainContent.textContent = "";
     bookTable.classList.add('books');
-    myLibrary.forEach(book => {
+    myLibrary.forEach((book,index) => {
         //create the card that will have the book
         bookDiv = document.createElement('div');
         bookDiv.classList.add('card');
         
-
-        bookDiv.innerHTML =
-        '<h1>' + `Title: ${book.title}` + '</h1>\n'
+        let isRead = book.read ? `<button style="width:100px" data-position="${index}" onclick="toggleReadButton(event)" class="read-yet">Read Already</button>` : `<button style="width:100px" data-position="${index}" onclick="toggleReadButton(event)" class="not-read-yet">Not Read</button>` + '</p>'
+        bookDiv.innerHTML = 
+        '<h1>' + `${book.title}` + '</h1>\n'
         + '<p>' + `Author: ${book.author}` + '</p>\n'
         + '<p>' + `Pages: ${book.pages}` + '</p>\n'
-        + '<p>' + `Title: ${book.read ? 'Already read' : 'Not read yet'}` + '</p>\n'
+        + '<p>Title: ' + `${isRead}`
+        + `<p><button onclick="removeBook(event)" data-position="${index}">Remove</button></p>`
 
         bookTable.appendChild(bookDiv);
 
@@ -70,6 +58,33 @@ function displayBooks() {
 }
 
 
+function removeBook(e) {
+    let indexToRemove = e.target.getAttribute('data-position');
+    myLibrary.splice(indexToRemove, 1);
+    displayBooks();
+}
+
+
+function toggleReadButton(event) {
+    let indexToToggle = event.target.getAttribute('data-position');
+    myLibrary[indexToToggle].toggleRead();
+    
+    //change button color and text
+    event.target.textContent = myLibrary[indexToToggle].read ? 'Read Already' : "Not yet";
+    event.target.classList.toggle('read-yet');
+    event.target.classList.toggle('not-read-yet');
+}
+
+Book.prototype.toggleRead = function () {
+    this.read = !this.read;
+}
+
+
+
+let book = new Book("tom tom et nana", "Herge", 300, true);
+let book2 = new Book("Le seigneur des anneaux", "Tolkien", 600, false);
+let book3 = new Book("Naruto", "Kishimoto", 150, true);
+myLibrary.push(book, book2, book3);
 displayBooks();
 
 

@@ -1,3 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  padding: 5px 0;
+}
+
 
 body {
   margin: 50px;
@@ -18,10 +27,16 @@ body {
 
 .card {
   border: 1px solid black;
+  padding: 15px;
 }
 
 form {
   width: 350px;
+
+}
+
+fieldset {
+  padding: 20px;
 }
 
 .input-container {
@@ -39,4 +54,12 @@ form {
 
 .input-container div:last-child {
   justify-content: start;
+}
+
+.read-yet {
+  background-color: green;
+}
+
+.not-read-yet {
+  background-color: red;
 }
