@@ -1,4 +1,5 @@
 const paraBooks = document.querySelector('.books');
+const mainContent = document.querySelector('.main-content');
 
 let bookDiv;
 let para;
@@ -47,7 +48,7 @@ function displayBooks() {
 
     });
 
-    document.body.appendChild(bookTable);
+    mainContent.appendChild(bookTable);
 }
 
 
