@@ -15,24 +15,24 @@
 
     <div class="container">
       <div>
-        <button onclick="addBookToLibrary()">NEW BOOK</button>
+        <button onclick="displayAddBookForm()">NEW BOOK</button>
         <br>
         <br>
-        <form >
+        <form class="book-form" hidden>
           <fieldset>
             <legend>Personalia:</legend>
             <div class="input-container">
               <div>
                 <label for="title">Title:</label>
-                <input type="text" id="title" name="title">
+                <input type="text" id="title" name="title" required>
               </div>
               <div>
                 <label for="author">Author:</label>
-                <input type="text" id="author" name="author">
+                <input type="text" id="author" name="author" required>
               </div>
               <div>
                 <label for="pages">Pages:</label>
-                <input type="number" id="pages" name="pages" placeholder="ex: 350">
+                <input type="number" id="pages" name="pages" placeholder="ex: 350" required>
               </div>
               <div>
                 <label for="read">Read Already?</label>
@@ -40,7 +40,8 @@
               </div>
             </div>
             <br>
-            <input type="button" id="addBook" name="addBook" value="Add book">
+            <input type="submit" id="btn-add-book" name="btn-add-book" value="Add book">
+            <input type="reset" value = Reset>
           </fieldset>
         </form>
       </div>

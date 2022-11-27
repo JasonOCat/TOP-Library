@@ -1,5 +1,9 @@
 const paraBooks = document.querySelector('.books');
 const mainContent = document.querySelector('.main-content');
+const bookForm = document.querySelector('.book-form');
+const addBookButton = document.querySelector('.book-form');
+addBookButton.addEventListener('submit', addBookToLibrary);
+
 
 let bookDiv;
 let para;
@@ -14,10 +18,23 @@ function Book(title, author, pages, read) {
     this.read = read;
 }
 
-function addBookToLibrary() {
-    var bookName = prompt("Please add a book : ");
-    myLibrary.push(new Book(bookName));
+function addBookToLibrary(e) {
+    e.preventDefault();
+    let title = document.getElementById('title').value;
+    let author = document.getElementById('author').value;
+    let pages = document.getElementById('pages').value;
+    let read = document.getElementById('read').value;
+    let book = new Book(title, author, pages, read);
+    myLibrary.push(book);
+    displayBooks();
 }
+
+function displayAddBookForm() {
+    bookForm.hidden = false;
+}
+
+
+
 
 let book = new Book("tom tom et nana", "Herge", 300, true);
 let book2 = new Book("Le seigneur des anneaux", "Tolkien", 600, false);
@@ -31,6 +48,7 @@ myLibrary.push(book, book2, book3, book4, book5, book6);
 
 function displayBooks() {
     const bookTable = document.createElement('div');
+    mainContent.textContent = "";
     bookTable.classList.add('books');
     myLibrary.forEach(book => {
         //create the card that will have the book
