@@ -25,10 +25,10 @@ class Library {
 
     initializeForm() {
         const addBookButton = document.querySelector('.book-form');
-        addBookButton.addEventListener('submit', this.addBookToLibrary.bind(this));
+        addBookButton.addEventListener('submit', this.addBookToLibrary);
     }
 
-    addBookToLibrary(e) {
+    addBookToLibrary = (e) => {
         e.preventDefault();
         const bookForm = document.querySelector('.book-form');
         let title = document.getElementById('title').value;
