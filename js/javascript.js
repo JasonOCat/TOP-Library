@@ -1,91 +1,133 @@
-const paraBooks = document.querySelector('.books');
-const mainContent = document.querySelector('.main-content');
-const bookForm = document.querySelector('.book-form');
-const addBookButton = document.querySelector('.book-form');
-addBookButton.addEventListener('submit', addBookToLibrary);
 
 
-let bookDiv;
-let para;
 
+class Library {
+    constructor() {
+        this.library = [];
+    }
 
-let myLibrary = [];
+    get library() {
+        return this._library;
+    }
 
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-}
+    set library(library) {
+        this._library = library;
+    }
 
-function addBookToLibrary(e) {
-    e.preventDefault();
-    let title = document.getElementById('title').value;
-    let author = document.getElementById('author').value;
-    let pages = document.getElementById('pages').value;
-    let read = document.getElementById('read').checked;
-    console.log(read);
-    let book = new Book(title, author, pages, read);
-    myLibrary.push(book);
-    alert(`"${title}" added`);
-    bookForm.reset();
-    displayBooks();
-}
+    addBooks(...books) {
+        this.library.push(...books);
+    }
 
+    removeBook(index) {
+        this.library.splice(index, 1);
+        this.displayBooks();
+    }
 
-function displayBooks() {
-    const bookTable = document.createElement('div');
-    mainContent.textContent = "";
-    bookTable.classList.add('books');
-    myLibrary.forEach((book,index) => {
-        //create the card that will have the book
-        bookDiv = document.createElement('div');
-        bookDiv.classList.add('card');
+    initializeForm() {
+        const addBookButton = document.querySelector('.book-form');
+        addBookButton.addEventListener('submit', this.addBookToLibrary.bind(this));
+    }
+
+    addBookToLibrary(e) {
+        e.preventDefault();
+        const bookForm = document.querySelector('.book-form');
+        let title = document.getElementById('title').value;
+        let author = document.getElementById('author').value;
+        let pages = document.getElementById('pages').value;
+        let read = document.getElementById('read').checked;
+        let book = new Book(title, author, pages, read);
+        this.library.push(book);
+        alert(`"${title}" added`);
+        bookForm.reset();
+        this.displayBooks();
+    }
+
+    toggleReadButton(event, index) {
+        this.library[index].toggleRead();
         
-        let isRead = book.read ? `<button style="width:100px" data-position="${index}" onclick="toggleReadButton(event)" class="read-yet">Read Already</button>` : `<button style="width:100px" data-position="${index}" onclick="toggleReadButton(event)" class="not-read-yet">Not Read</button>` + '</p>'
-        bookDiv.innerHTML = 
-        '<h1>' + `${book.title}` + '</h1>\n'
-        + '<p>' + `Author: ${book.author}` + '</p>\n'
-        + '<p>' + `Pages: ${book.pages}` + '</p>\n'
-        + '<p>Title: ' + `${isRead}`
-        + `<p><button onclick="removeBook(event)" data-position="${index}">Remove</button></p>`
+        //change button color and text
+        event.target.textContent = this.library[index].read ? 'Read Already' : "Not yet";
+        event.target.classList.toggle('read-yet');
+        event.target.classList.toggle('not-read-yet');
+    }
 
-        bookTable.appendChild(bookDiv);
+    displayBooks() {
+        const mainContent = document.querySelector('.main-content');
+        let bookDiv;
+        let btnRemove;
+        const bookTable = document.createElement('div');
+        mainContent.textContent = "";
+        bookTable.classList.add('books');
+        this.library.forEach((book,index) => {
+            btnRemove = document.createElement('p');
+            //create the card that will have the book
+            bookDiv = document.createElement('div');
+            bookDiv.classList.add('card');
+            
 
-    });
+            let btnRead = document.createElement("span");
+            let btnNotRead = document.createElement("span");
+            btnRead.innerHTML = `<p>Read? <button style="width:100px" data-position="${index}" class="read-yet">Read Already</button></p>`
+            btnRead.addEventListener('click', (e) => this.toggleReadButton(e,`${index}`))
+            btnNotRead.innerHTML = `<p> Read? <button style="width:100px" data-position="${index}" class="not-read-yet">Not Read</button></p>`
+            btnNotRead.addEventListener('click', (e) => this.toggleReadButton(e, `${index}`))
+            let isRead = book.read ? btnRead : btnNotRead;
+            bookDiv.innerHTML = 
+            '<h1>' + `${book.title}` + '</h1>\n'
+            + '<p>' + `Author: ${book.author}` + '</p>\n'
+            + '<p>' + `Pages: ${book.pages}` + '</p>\n'
 
-    mainContent.appendChild(bookTable);
-}
+            bookDiv.appendChild(isRead)
 
+            btnRemove.innerHTML = `<button class="btn-remove" data-position="${index}">Remove</button>`
+            btnRemove.addEventListener('click', (e) => this.removeBook(e.target.getAttribute("data-position")));
+            bookDiv.appendChild(btnRemove);
+            bookTable.appendChild(bookDiv);
 
-function removeBook(e) {
-    let indexToRemove = e.target.getAttribute('data-position');
-    myLibrary.splice(indexToRemove, 1);
-    displayBooks();
-}
-
-
-function toggleReadButton(event) {
-    let indexToToggle = event.target.getAttribute('data-position');
-    myLibrary[indexToToggle].toggleRead();
+                    
     
-    //change button color and text
-    event.target.textContent = myLibrary[indexToToggle].read ? 'Read Already' : "Not yet";
-    event.target.classList.toggle('read-yet');
-    event.target.classList.toggle('not-read-yet');
+        });
+    
+        mainContent.appendChild(bookTable);
+    }
+
 }
 
-Book.prototype.toggleRead = function () {
-    this.read = !this.read;
+class Book{
+    constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+    }
+
+    toggleRead() {
+        this.read = !this.read;
+    }
+
 }
 
 
 
-let book = new Book("tom tom et nana", "Herge", 300, true);
-let book2 = new Book("Le seigneur des anneaux", "Tolkien", 600, false);
-let book3 = new Book("Naruto", "Kishimoto", 150, true);
-myLibrary.push(book, book2, book3);
-displayBooks();
+
+
+const LibraryInitializer = (() => {    
+    let book = new Book("tom tom et nana", "Herge", 300, true);
+    let book2 = new Book("Le seigneur des anneaux", "Tolkien", 600, false);
+    let book3 = new Book("Naruto", "Kishimoto", 150, true);
+    let myLibrary = new Library();
+    
+    myLibrary.addBooks(book, book2, book3);
+    myLibrary.displayBooks();
+    myLibrary.initializeForm();
+})();
+
+
+
+
+
+
+
 
 
 
